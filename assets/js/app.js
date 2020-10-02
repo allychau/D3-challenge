@@ -66,28 +66,17 @@ d3.csv("../assets/data/data.csv").then(function(censusData, err) {
        .attr("r", 10)
        .attr("fill", "blue")
        .attr("opacity", "0.6")
-       .style("stroke", "white");
-       /*.on("mouseover", function() {
-        d3.select(this)
-          .style("back-ground", "orange");
-
-        // get current event info
-        console.log(d3.event);
-        // get x & y coordinates 
-        console.log(d3.mouse(this));
-        })
-        .on("mouseout",function() {
-        d3.select(this)
-         .style("back-ground", "steelblue")
-        });
-        */
-
+    
        circleGroup.append("text")
+       .attr("font-size", "12px")
+       .attr("font-family", "sans-serif")
+       .attr("fill", "black")
+       //.style("stroke", "white")
        .text(function(d) {
            return d.abbr;
         })
-       .attr("x", d => xLinearScale(d.poverty) - 10 )
-       .attr("y", d => xLinearScale(d.healthcare) + 3);
+       .attr("x", d => xLinearScale(d.poverty) )
+       .attr("y", d => xLinearScale(d.healthcare));
 
        // Create Axes Labels
        // X axis label
@@ -104,9 +93,6 @@ d3.csv("../assets/data/data.csv").then(function(censusData, err) {
             .attr("x", 0 - (height / 2))
             .attr("class", "axisText")
             .text("Lack's Healthcare (%)");
-    
-       console.log("I am here");
-       d3.select("cirlcle").text("AC");     
    
 })
 
