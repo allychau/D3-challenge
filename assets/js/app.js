@@ -66,46 +66,47 @@ d3.csv("../assets/data/data.csv").then(function(censusData, err) {
        .attr("r", 10)
        .attr("fill", "blue")
        .attr("opacity", "0.6")
-       .style("stroke", "white")
+       .style("stroke", "white");
+       /*.on("mouseover", function() {
+        d3.select(this)
+          .style("back-ground", "orange");
+
+        // get current event info
+        console.log(d3.event);
+        // get x & y coordinates 
+        console.log(d3.mouse(this));
+        })
+        .on("mouseout",function() {
+        d3.select(this)
+         .style("back-ground", "steelblue")
+        });
+        */
 
        circleGroup.append("text")
        .text(function(d) {
            return d.abbr;
         })
-       .attr("x", d => xLinearScale(d.poverty) - 20 )
-       .attr("y", d => xLinearScale(d.healthcare) + 6)
-       
-       //.on("click", tool_tip.show)
-       //.on("mouseout", tool_tip.hide)
+       .attr("x", d => xLinearScale(d.poverty) - 10 )
+       .attr("y", d => xLinearScale(d.healthcare) + 3);
 
-     
-     // Create group for two x-axis labels
-  var labelsGroup = chartGroup.append("g")
-  .attr("transform", `translate(${width / 2}, ${height + 20})`);
-
-/*var inPovertyLabel = labelsGroup.append("text")
-  .attr("x", 0)
-  .attr("y", 20)
-  .attr("value", "poverty") // value to grab for event listener
-  .classed("active", true)
-  .text("In Poverty (%)");
-*/
-var inPovertyLabel = labelsGroup.append("text")
-.attr("y", 30)
-.attr("data-name", "poverty")
-.attr("data-axis", "x")
-.attr("class", "aText active x")
-.text("In Poverty (%)");
-
-// append y axis
-chartGroup.append("text")
-  .attr("transform", "rotate(-90)")
-  .attr("y", 0 - margin.left)
-  .attr("x", 0 - (height / 2))
-  .attr("dy", "1em")
-  .classed("axis-text", true)
-  .text("Lack's Healthcare (%");
-  
+       // Create Axes Labels
+       // X axis label
+        chartGroup.append("text")
+            .attr("x", width / 2)
+            .attr("y", height + margin.top + 50)
+            .attr("class", "axisText")
+            .text("In Poverty (%)");
+            
+        // Y axis label
+        chartGroup.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - margin.left + 20)
+            .attr("x", 0 - (height / 2))
+            .attr("class", "axisText")
+            .text("Lack's Healthcare (%)");
+    
+       console.log("I am here");
+       d3.select("cirlcle").text("AC");     
    
 })
 
@@ -117,8 +118,8 @@ function xScale(censusData, chosenXAxis) {
           d3.max(censusData, d => d[chosenXAxis]) * 1.2
        ])
       .range([0, width]);
-    //console.log("min: " , d3.min(censusData, d => d[chosenXAxis]));
-    //console.log("xScale: " ,d3.max(censusData, d => d[chosenXAxis]));
+    console.log("min: " , d3.min(censusData, d => d[chosenXAxis]));
+    console.log("xScale: " ,d3.max(censusData, d => d[chosenXAxis]));
     
     return xLinearScale;
   
@@ -128,35 +129,13 @@ function yScale(censusData,chosenYAxis) {
     var yLinearScale = d3.scaleLinear()
        .domain([0, d3.max(censusData, d => d.healthcare)])
        .range([height, 0]);
-
-    console.log("ymin: ", d3.min(censusData, d => d.healthcare));
-    console.log("yScale: ", d3.max(censusData, d => d.healthcare));
+    //console.log("ymin: ", d3.min(censusData, d => d.healthcare));
+    //console.log("yScale: ", d3.max(censusData, d => d.healthcare));
     return yLinearScale;
 }
-  // function used for updating xAxis var upon click on axis label
-function renderAxes(newXScale, xAxis) {
-    var bottomAxis = d3.axisBottom(newXScale);
   
-    xAxis.transition()
-      .duration(1000)
-      .call(bottomAxis);
-  
-    return xAxis;
-  }
-  
-  // function used for updating circles group with a transition to
-  // new circles
-  function renderCircles(circlesGroup, newXScale, chosenXAxis) {
-  
-    circlesGroup.transition()
-      .duration(1000)
-      .attr("cx", d => newXScale(d[chosenXAxis]));
-  
-    return circlesGroup;
-  }
-
   // function used for updating circles group with new tooltip
-function updateToolTip(chosenXAxis, circlesGroup) {
+/*function updateToolTip(chosenXAxis, circlesGroup) {
 
     var label;
   
@@ -186,3 +165,4 @@ function updateToolTip(chosenXAxis, circlesGroup) {
   
     return circlesGroup;
   }
+*/
