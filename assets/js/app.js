@@ -32,7 +32,7 @@ d3.csv("../assets/data/data.csv").then(function(censusData, err) {
     if (err) throw err;
   
     // parse data
-    censusData.forEach(function(data) {
+      censusData.forEach(function(data) {
       data.abbr = data.abbr;
       data.poverty = +data.poverty;
       data.povertyMoe = +data.povertyMoe;
@@ -63,7 +63,9 @@ d3.csv("../assets/data/data.csv").then(function(censusData, err) {
        .append("circle")
        .attr("cx", d => xLinearScale(d.poverty))
        .attr("cy", d => yLinearScale(d.healthcare))
-       .attr("r", 10)
+       //.attr("cx", 10)
+       //.attr("cy", 10)
+       .attr("r", 20)
        .attr("fill", "blue")
        .attr("opacity", "0.6")
     
@@ -75,8 +77,9 @@ d3.csv("../assets/data/data.csv").then(function(censusData, err) {
        .text(function(d) {
            return d.abbr;
         })
+        //.attr("dx", function(d){return -20})
        .attr("x", d => xLinearScale(d.poverty) )
-       .attr("y", d => xLinearScale(d.healthcare));
+       .attr("y", d => yLinearScale(d.healthcare));
 
        // Create Axes Labels
        // X axis label
@@ -103,9 +106,9 @@ function xScale(censusData, chosenXAxis) {
        .domain([d3.min(censusData, d => d[chosenXAxis])* 0.8,
           d3.max(censusData, d => d[chosenXAxis]) * 1.2
        ])
-      .range([0, width]);
-    console.log("min: " , d3.min(censusData, d => d[chosenXAxis]));
-    console.log("xScale: " ,d3.max(censusData, d => d[chosenXAxis]));
+       .range([0, width]);
+    //console.log("min: " , d3.min(censusData, d => d[chosenXAxis]));
+    //console.log("xScale: " ,d3.max(censusData, d => d[chosenXAxis]));
     
     return xLinearScale;
   
