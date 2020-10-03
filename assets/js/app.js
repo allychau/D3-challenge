@@ -96,13 +96,31 @@ d3.csv("../assets/data/data.csv").then(function(censusData, err) {
                      .append("text")
                      .attr("x", d => xLinearScale(d[chosenXAxis]))
                      .attr("y", d => yLinearScale(d[chosenYAxis]))
+                     .attr("text-anchor", "middle")   
                      .text(function(d) {
                         return d.abbr;
                      })
                      .attr("font-family", "sans-serif")
                      .attr("font-size", "10px")
-                     .attr("fill", "white")
-                     .attr("text-anchor", "middle");   
+                     .attr("fill", "white");
+
+    // Event listeners with transitions
+circleGroup.on("mouseover", function() {
+    d3.select(this)
+      .transition()
+      .duration(1000)
+      .attr("r", 20)
+      .attr("fill", "lightblue");
+  })
+    .on("mouseout", function() {
+      d3.select(this)
+        .transition()
+        .duration(1000)
+        .attr("r", 10)
+        .attr("fill", "red");
+    });
+  
+                     
 });
 
 // function used for updating x-scale var upon click on axis label
@@ -123,3 +141,4 @@ function yScale(censusData,chosenYAxis) {
     
     return yLinearScale;
 }
+
