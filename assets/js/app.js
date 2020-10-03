@@ -32,17 +32,15 @@ d3.csv("../assets/data/data.csv").then(function(censusData, err) {
     if (err) throw err;
   
     // parse data
-      censusData.forEach(function(data) {
-      data.abbr = data.abbr;
-      data.poverty = +data.poverty;
-      data.povertyMoe = +data.povertyMoe;
-      data.healthcare = +data.healthcare;
-      //console.log(data.abbr + " " + data.poverty + " " + data.healthcare);
+    censusData.forEach(function(data) {
+       data.abbr = data.abbr;
+       data.poverty = +data.poverty;
+       data.healthcare = +data.healthcare;
     });
+
     //Create scale functions for output value from input values from file
     var xLinearScale = xScale(censusData,chosenXAxis);   
     var yLinearScale = yScale(censusData,chosenYAxis);
-    
     var bottomAxis = d3.axisBottom(xLinearScale);
     var leftAxis = d3.axisLeft(yLinearScale);
     
@@ -56,69 +54,72 @@ d3.csv("../assets/data/data.csv").then(function(censusData, err) {
     chartGroup.append("g")
     .call(leftAxis);
 
-    // Add circles to the SVG canvas
-    var circleGroup = chartGroup.selectAll("circle")
-       .data(censusData);
-    
-    var newElement = circleGroup.enter();
-       
-    newElement.append("circle")
-       .attr("cx", d => xLinearScale(d.poverty))
-       .attr("cy", d => yLinearScale(d.healthcare))
-       
-       .attr("r", 10)
-       .attr("fill", "blue")
-       .attr("opacity", "0.6")
-    
-       newElement.append("text")
-       .attr("font-size", "10px")
-       .attr("font-family", "sans-serif")
-       .attr("fill", "white")
-       //.style("stroke", "white")
-       .attr("text-anchor", "middle")
-       .text(function(d) {
-           return d.abbr;
-        })
-       .attr("x", d => xLinearScale(d.poverty) )
-       .attr("y", d => yLinearScale(d.healthcare));
-
-       // Create Axes Labels
-       // X axis label
-        chartGroup.append("text")
+    // Create Axes Labels
+    // X axis label
+    chartGroup.append("text")
             .attr("x", width / 2)
             .attr("y", height + margin.top + 50)
             .attr("class", "axisText")
             .text("In Poverty (%)");
             
-        // Y axis label
-        chartGroup.append("text")
+    // Y axis label
+    chartGroup.append("text")
             .attr("transform", "rotate(-90)")
             .attr("y", 0 - margin.left + 20)
             .attr("x", 0 - (height / 2))
             .attr("class", "axisText")
             .text("Lack's Healthcare (%)"); 
-})
+
+    // Add circles to the SVG canvas
+    var circleGroup = chartGroup.selectAll("circle")
+       .data(censusData)
+       .enter();
+        
+    // Add the circles Element
+    var circleAttributes = circleGroup
+                           .append("circle")
+                           .attr("cx", d => xLinearScale(d[chosenXAxis]))
+                           .attr("cy", d => yLinearScale(d[chosenYAxis]))
+                           .attr("r", 10)
+                           .attr("fill", "blue")
+                           .attr("opacity", "0.6");
+
+    //Add the SVG Text Element to the svgContainer
+   /* var text = chartGroup.selectAll("text")
+                .data(censusData)
+                .enter()
+                .append("text");
+    */
+   var textElement = chartGroup.enter();
+    //Add SVG Text Element 
+                     circleGroup
+                     .append("text")
+                     .attr("x", d => xLinearScale(d[chosenXAxis]))
+                     .attr("y", d => yLinearScale(d[chosenYAxis]))
+                     .text(function(d) {
+                        return d.abbr;
+                     })
+                     .attr("font-family", "sans-serif")
+                     .attr("font-size", "10px")
+                     .attr("fill", "white")
+                     .attr("text-anchor", "middle");   
+});
 
 // function used for updating x-scale var upon click on axis label
 function xScale(censusData, chosenXAxis) {
     // create scales
     var xLinearScale = d3.scaleLinear()
        .domain([d3.min(censusData, d => d[chosenXAxis])* 0.8,
-          d3.max(censusData, d => d[chosenXAxis]) * 1.2
-       ])
+                d3.max(censusData, d => d[chosenXAxis]) * 1.2])
        .range([0, width]);
-    //console.log("min: " , d3.min(censusData, d => d[chosenXAxis]));
-    //console.log("xScale: " ,d3.max(censusData, d => d[chosenXAxis]));
     
     return xLinearScale;
-  
   }
 
 function yScale(censusData,chosenYAxis) {
     var yLinearScale = d3.scaleLinear()
-       .domain([0, d3.max(censusData, d => d.healthcare)])
+       .domain([0, d3.max(censusData, d => d[chosenYAxis])])
        .range([height, 0]);
-    //console.log("ymin: ", d3.min(censusData, d => d.healthcare));
-    //console.log("yScale: ", d3.max(censusData, d => d.healthcare));
+    
     return yLinearScale;
 }
