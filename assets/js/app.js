@@ -56,28 +56,29 @@ d3.csv("../assets/data/data.csv").then(function(censusData, err) {
     chartGroup.append("g")
     .call(leftAxis);
 
-    // append initial circles
+    // Add circles to the SVG canvas
     var circleGroup = chartGroup.selectAll("circle")
-       .data(censusData)
-       .enter()
-       .append("circle")
+       .data(censusData);
+    
+    var newElement = circleGroup.enter();
+       
+    newElement.append("circle")
        .attr("cx", d => xLinearScale(d.poverty))
        .attr("cy", d => yLinearScale(d.healthcare))
-       //.attr("cx", 10)
-       //.attr("cy", 10)
-       .attr("r", 20)
+       
+       .attr("r", 10)
        .attr("fill", "blue")
        .attr("opacity", "0.6")
     
-       circleGroup.append("text")
-       .attr("font-size", "12px")
+       newElement.append("text")
+       .attr("font-size", "10px")
        .attr("font-family", "sans-serif")
-       .attr("fill", "black")
+       .attr("fill", "white")
        //.style("stroke", "white")
+       .attr("text-anchor", "middle")
        .text(function(d) {
            return d.abbr;
         })
-        //.attr("dx", function(d){return -20})
        .attr("x", d => xLinearScale(d.poverty) )
        .attr("y", d => yLinearScale(d.healthcare));
 
@@ -95,8 +96,7 @@ d3.csv("../assets/data/data.csv").then(function(censusData, err) {
             .attr("y", 0 - margin.left + 20)
             .attr("x", 0 - (height / 2))
             .attr("class", "axisText")
-            .text("Lack's Healthcare (%)");
-   
+            .text("Lack's Healthcare (%)"); 
 })
 
 // function used for updating x-scale var upon click on axis label
@@ -122,36 +122,3 @@ function yScale(censusData,chosenYAxis) {
     //console.log("yScale: ", d3.max(censusData, d => d.healthcare));
     return yLinearScale;
 }
-  
-  // function used for updating circles group with new tooltip
-/*function updateToolTip(chosenXAxis, circlesGroup) {
-
-    var label;
-  
-    if (chosenXAxis === "hair_length") {
-      label = "Hair Length:";
-    }
-    else {
-      label = "# of Albums:";
-    }
-  
-    var toolTip = d3.tip()
-      .attr("class", "tooltip")
-      .offset([80, -60])
-      .html(function(d) {
-        return (`${d.rockband}<br>${label} ${d[chosenXAxis]}`);
-      });
-  
-    circlesGroup.call(toolTip);
-  
-    circlesGroup.on("mouseover", function(data) {
-      toolTip.show(data);
-    })
-      // onmouseout event
-      .on("mouseout", function(data, index) {
-        toolTip.hide(data);
-      });
-  
-    return circlesGroup;
-  }
-*/
