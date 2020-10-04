@@ -76,59 +76,34 @@ d3.csv("../assets/data/data.csv").then(function(censusData, err) {
        .enter();
         
     // Add the circles Element
-    var circleAttributes = circleGroup
-                           .append("circle")
-                           .attr("cx", d => xLinearScale(d[chosenXAxis]))
-                           .attr("cy", d => yLinearScale(d[chosenYAxis]))
-                           .attr("r", 10)
-                           .attr("fill", "blue")
-                           .attr("opacity", "0.6");
+    circleGroup
+    .append("circle")
+    .attr("cx", d => xLinearScale(d[chosenXAxis]))
+    .attr("cy", d => yLinearScale(d[chosenYAxis]))
+    .attr("r", 10)
+    .attr("fill", "blue")
+    .attr("opacity", "0.6");
 
-    //Add the SVG Text Element to the svgContainer
-   /* var text = chartGroup.selectAll("text")
-                .data(censusData)
-                .enter()
-                .append("text");
-    */
-   var textElement = chartGroup.enter();
     //Add SVG Text Element 
-                     circleGroup
-                     .append("text")
-                     .attr("x", d => xLinearScale(d[chosenXAxis]))
-                     .attr("y", d => yLinearScale(d[chosenYAxis]))
-                     .attr("text-anchor", "middle")   
-                     .text(function(d) {
-                        return d.abbr;
-                     })
-                     .attr("font-family", "sans-serif")
-                     .attr("font-size", "10px")
-                     .attr("fill", "white");
-
-    // Event listeners with transitions
-circleGroup.on("mouseover", function() {
-    d3.select(this)
-      .transition()
-      .duration(1000)
-      .attr("r", 20)
-      .attr("fill", "lightblue");
-  })
-    .on("mouseout", function() {
-      d3.select(this)
-        .transition()
-        .duration(1000)
-        .attr("r", 10)
-        .attr("fill", "red");
-    });
-  
-                     
+    circleGroup
+    .append("text")
+    .attr("x", d => xLinearScale(d[chosenXAxis]))
+    .attr("y", d => yLinearScale(d[chosenYAxis]))
+    .attr("text-anchor", "middle")   
+    .text(function(d) {
+       return d.abbr;
+    })
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "10px")
+    .attr("fill", "white");                  
 });
 
 // function used for updating x-scale var upon click on axis label
 function xScale(censusData, chosenXAxis) {
     // create scales
     var xLinearScale = d3.scaleLinear()
-       .domain([d3.min(censusData, d => d[chosenXAxis])* 0.8,
-                d3.max(censusData, d => d[chosenXAxis]) * 1.2])
+       .domain([d3.min(censusData, d => d[chosenXAxis])* 0.9,
+                d3.max(censusData, d => d[chosenXAxis]) * 1.1])
        .range([0, width]);
     
     return xLinearScale;
@@ -136,7 +111,7 @@ function xScale(censusData, chosenXAxis) {
 
 function yScale(censusData,chosenYAxis) {
     var yLinearScale = d3.scaleLinear()
-       .domain([0, d3.max(censusData, d => d[chosenYAxis])])
+       .domain([0, d3.max(censusData, d => d[chosenYAxis]) * 1.1])
        .range([height, 0]);
     
     return yLinearScale;
