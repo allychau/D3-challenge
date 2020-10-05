@@ -2,10 +2,10 @@ var svgWidth = 960;
 var svgHeight = 600;
 
 var margin = {
-  top: 20,
+  top: 40,
   right: 40,
   bottom: 80,
-  left: 100
+  left: 80
 };
 
 var width = svgWidth - margin.left - margin.right;
@@ -29,73 +29,98 @@ var chosenYAxis = "healthcare";
 
 // Retrieve data from the CSV file and execute everything below
 d3.csv("../assets/data/data.csv").then(function(censusData, err) {
-    if (err) throw err;
+   if (err) throw err;
   
     // parse data
-    censusData.forEach(function(data) {
-       data.abbr = data.abbr;
-       data.poverty = +data.poverty;
-       data.healthcare = +data.healthcare;
-    });
+   censusData.forEach(function(data) {
+      data.state = data.state;
+      data.abbr = data.abbr;
+      data.poverty = +data.poverty;
+      data.age = +data.age;
+      data.income = +data.income;
+      data.healthcare = +data.healthcare;
+      data.obesity = +data.obesity;
+      data.smokes = data.smokes;
 
-    //Create scale functions for output value from input values from file
-    var xLinearScale = xScale(censusData,chosenXAxis);   
-    var yLinearScale = yScale(censusData,chosenYAxis);
-    var bottomAxis = d3.axisBottom(xLinearScale);
-    var leftAxis = d3.axisLeft(yLinearScale);
+   });
+
+   //Create scale functions for output value from input values from file
+   var xLinearScale = xScale(censusData,chosenXAxis);   
+   var yLinearScale = yScale(censusData,chosenYAxis);
+   var bottomAxis = d3.axisBottom(xLinearScale);
+   var leftAxis = d3.axisLeft(yLinearScale);
     
-    // append x axis
-    var xAxis = chartGroup.append("g")
-    .classed("x-axis", true)
-    .attr("transform", `translate(0, ${height})`)
-    .call(bottomAxis);
+   // append x axis
+   var xAxis = chartGroup.append("g")
+   .classed("x-axis", true)
+   .attr("transform", `translate(0, ${height})`)
+   .call(bottomAxis);
 
-    // append y axis
-    chartGroup.append("g")
-    .call(leftAxis);
+   // append y axis
+   chartGroup.append("g")
+   .call(leftAxis);
 
-    // Create Axes Labels
-    // X axis label
-    chartGroup.append("text")
-            .attr("x", width / 2)
-            .attr("y", height + margin.top + 50)
-            .attr("class", "axisText")
-            .text("In Poverty (%)");
+   // Create Axes Labels
+   // X axis label
+   chartGroup.append("text")
+             .attr("x", width / 2)
+             .attr("y", height + margin.top + 20)
+             .attr("class", "axisText")
+             .text("In Poverty (%)");
             
-    // Y axis label
-    chartGroup.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 0 - margin.left + 20)
-            .attr("x", 0 - (height / 2))
-            .attr("class", "axisText")
-            .text("Lack's Healthcare (%)"); 
+   // Y axis label
+   chartGroup.append("text")
+             .attr("transform", "rotate(-90)")
+             .attr("y", 0 - margin.left + 20)
+             .attr("x", 0 - (height / 2))
+             .attr("class", "axisText")
+             .text("Lack's Healthcare (%)"); 
 
-    // Add circles to the SVG canvas
-    var circleGroup = chartGroup.selectAll("circle")
+   var toolTip = d3.tip()
+      .attr("class", "tooltip")
+      .offset([80, -60])
+      .html(function(d) { return `${d.state}<br>$${d.income}<br>Poverty: ${d[chosenXAxis]}%<br>Healthcare:\
+            ${d[chosenYAxis]}%<hr>Age: ${d.age}<br>Obesity: ${d.obesity}%<br>Smoke: ${d.smokes}%`});
+   svg.call(toolTip);
+       
+
+   // Add circles to the SVG canvas
+   var circleGroup = chartGroup.selectAll("circle")
        .data(censusData)
        .enter();
-        
-    // Add the circles Element
-    circleGroup
+       
+   // Add the circles Element
+   circleGroup
     .append("circle")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d[chosenYAxis]))
     .attr("r", 10)
     .attr("fill", "blue")
-    .attr("opacity", "0.6");
+    .attr("opacity", "0.5");
 
-    //Add SVG Text Element 
-    circleGroup
-    .append("text")
-    .attr("x", d => xLinearScale(d[chosenXAxis]))
-    .attr("y", d => yLinearScale(d[chosenYAxis]))
-    .attr("text-anchor", "middle")   
-    .text(function(d) {
-       return d.abbr;
-    })
-    .attr("font-family", "sans-serif")
-    .attr("font-size", "10px")
-    .attr("fill", "white");                  
+   //Add SVG Text Element 
+   circleGroup
+     .append("text")
+     .attr("x", d => xLinearScale(d[chosenXAxis]))
+     .attr("y", d => yLinearScale(d[chosenYAxis]))
+     .attr("text-anchor", "middle")   
+     .text(function(d) {
+        return d.abbr;
+     })
+     .attr("font-family", "sans-serif")
+     .attr("font-size", "10px")
+     .attr("fill", "white")
+
+   
+      .on("mouseover", function(data) {
+         //console.log("data");
+         toolTip.show(data);
+      })
+        // onmouseout event
+      .on("mouseout", function(data, index) {
+          toolTip.hide(data);
+      });
+    
 });
 
 // function used for updating x-scale var upon click on axis label
